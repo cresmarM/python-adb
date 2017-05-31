@@ -16,16 +16,10 @@
 import argparse
 import binascii
 import collections
+import cStringIO
 import logging
 import os
 import struct
-import sys
-
-PYTHON_27 = sys.version_info < (3,0)
-if PYTHON_27:
-    from cStringIO import StringIO
-else:
-    from io import StringIO
 
 from adb import common
 from adb import usb_exceptions
@@ -93,8 +87,7 @@ class FastbootProtocol(object):
     """
     if arg is not None:
       command = '%s:%s' % (command, arg)
-
-    self._Write(StringIO(command), len(command))
+    self._Write(cStringIO.StringIO(command), len(command))
 
   def HandleSimpleResponses(
       self, timeout_ms=None, info_cb=DEFAULT_MESSAGE_CALLBACK):
@@ -196,7 +189,7 @@ class FastbootProtocol(object):
     """Sends the data to the device, tracking progress with the callback."""
     if progress_callback:
       progress = self._HandleProgress(length, progress_callback)
-      next(progress)  
+      progress.next()
     while length:
       tmp = data.read(self.chunk_kb * 1024)
       length -= len(tmp)
@@ -284,14 +277,14 @@ class FastbootCommands(object):
     Returns:
       Response to a download request, normally nothing.
     """
-    if isinstance(source_file, str):
+    if isinstance(source_file, basestring):
       source_len = os.stat(source_file).st_size
       source_file = open(source_file)
 
     if source_len == 0:
       # Fall back to storing it all in memory :(
       data = source_file.read()
-      source_file = StringIO(data)
+      source_file = cStringIO.StringIO(data)
       source_len = len(data)
 
     self._protocol.SendCommand('download', '%08x' % source_len)

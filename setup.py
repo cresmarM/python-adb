@@ -54,8 +54,7 @@ Android project's ADB.
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2', 
-        'Programming Language :: Python :: 3', 
+        #'Programming Language :: Python :: 3', ## import cStringIO fails with python3
         'Topic :: Software Development :: Testing'
         ]
 )

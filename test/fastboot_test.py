@@ -14,13 +14,7 @@
 # limitations under the License.
 """Tests for adb.fastboot."""
 
-import sys
-PYTHON_27 = sys.version_info < (3,0)
-
-if PYTHON_27:
-    from cStringIO import StringIO
-else:
-    from io import StringIO
+import cStringIO
 import os
 import tempfile
 import unittest
@@ -64,7 +58,7 @@ class FastbootTest(unittest.TestCase):
 
   def testDownload(self):
     raw = 'aoeuidhtnsqjkxbmwpyfgcrl'
-    data = StringIO(raw)
+    data = cStringIO.StringIO(raw)
 
     self.ExpectDownload([raw])
     commands = fastboot.FastbootCommands(self.usb)
@@ -74,14 +68,14 @@ class FastbootTest(unittest.TestCase):
 
   def testDownloadFail(self):
     raw = 'aoeuidhtnsqjkxbmwpyfgcrl'
-    data = StringIO(raw)
+    data = cStringIO.StringIO(raw)
 
     self.ExpectDownload([raw], succeed=False)
     commands = fastboot.FastbootCommands(self.usb)
     with self.assertRaises(fastboot.FastbootRemoteFailure):
       commands.Download(data)
 
-    data = StringIO(raw)
+    data = cStringIO.StringIO(raw)
     self.ExpectDownload([raw], accept_data=False)
     with self.assertRaises(fastboot.FastbootTransferError):
       commands.Download(data)
@@ -92,7 +86,7 @@ class FastbootTest(unittest.TestCase):
     self.ExpectFlash(partition)
     commands = fastboot.FastbootCommands(self.usb)
 
-    output = StringIO()
+    output = cStringIO.StringIO()
     def InfoCb(message):
       if message.header == 'INFO':
         output.write(message.message)
@@ -114,7 +108,7 @@ class FastbootTest(unittest.TestCase):
     # More than one packet, ends somewhere into the 3rd packet.
     raw = 'SOMETHING' * 1086
     tmp = tempfile.NamedTemporaryFile(delete=False)
-    tmp.write(raw.encode('ascii'))
+    tmp.write(raw)
     tmp.close()
     progresses = []
 
