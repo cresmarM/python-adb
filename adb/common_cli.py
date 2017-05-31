@@ -30,14 +30,6 @@ import types
 
 from adb import usb_exceptions
 
-
-class _PortPathAction(argparse.Action):
-  def __call__(self, parser, namespace, values, option_string=None):
-    setattr(
-        namespace, self.dest,
-        [int(i) for i in values.replace('/', ',').split(',')])
-
-
 class PositionalArg(argparse.Action):
   def __call__(self, parser, namespace, values, option_string=None):
     namespace.positional.append(values)
@@ -49,7 +41,7 @@ def GetDeviceArguments():
       '--timeout_ms', default=10000, type=int, metavar='10000',
       help='Timeout in milliseconds.')
   group.add_argument(
-      '--port_path', action=_PortPathAction,
+      '--port_path',
       help='USB port path integers (eg 1,2 or 2,1,1)')
   group.add_argument(
       '-s', '--serial',
