@@ -22,10 +22,12 @@ import weakref
 
 import libusb1
 import usb1
+import re
 
 from adb import usb_exceptions
 
 DEFAULT_TIMEOUT_MS = 1000
+SYSFS_PORT_SPLIT_RE = re.compile("[,/:.-]")
 
 _LOG = logging.getLogger('android_usb')
 
